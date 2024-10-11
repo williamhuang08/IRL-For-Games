@@ -1,1 +1,1 @@
-# AIRL-For-Games
+# Adversarial Inverse Reinforcement Learning for Games
