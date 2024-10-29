@@ -2,7 +2,7 @@
 
 ## Folder Organization
 
-** bc-irl-main **
+**bc-irl-main**
 
 The bc-irl-main folder contains the project code from Meta Research's [BC-IRL project](https://github.com/facebookresearch/bc-irl). Please see their Github and paper for more detailed information regarding their model and implementation. 
 
