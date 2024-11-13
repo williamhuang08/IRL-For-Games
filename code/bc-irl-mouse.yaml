@@ -1,0 +1,144 @@
+env_settings: {}
+obs_shape: ???
+action_dim: ???
+total_num_updates: ???
+action_is_discrete: ???
+num_steps: 50
+num_envs: 256
+device: cpu
+only_eval: false
+seed: 3
+num_eval_episodes: 100
+num_env_steps: 50000000
+recurrent_hidden_state_size: 128
+gamma: 0.8
+log_interval: 10
+eval_interval: 500
+save_interval: 10000000000
+load_checkpoint: null
+load_policy: true
+resume_training: false
+policy:
+    _target_: imitation_learning.policy_opt.policy.Policy
+    hidden_size: 512
+    recurrent_hidden_size: 128
+    is_recurrent: false
+    obs_shape: ${obs_shape}
+    action_dim: ${action_dim}
+    action_is_discrete: ${action_is_discrete}
+    std_init: 0
+    num_envs: ${num_envs}
+policy_updater:
+    _target_: imitation_learning.bcirl.BCIRL
+    _recursive_: false
+    use_clipped_value_loss: true
+    clip_param: 0.2
+    value_loss_coef: 0.5
+    entropy_coef: 0.0001
+    max_grad_norm: 0.5
+    num_epochs: 2
+    num_mini_batch: 4
+    num_envs: ${num_envs}
+    num_steps: ${num_steps}
+    gae_lambda: 0.95
+    gamma: ${gamma}
+    optimizer_params:
+        _target_: torch.optim.Adam
+        lr: 0.0003
+    batch_size: 256
+    plot_interval: ${eval_interval}
+    norm_expert_actions: false
+    n_inner_iters: 1
+    reward_update_freq: 1
+    device: ${device}
+    total_num_updates: ${total_num_updates}
+    use_lr_decay: false
+    get_dataset_fn:
+        _target_: imitation_learning.common.utils.get_transition_dataset
+        dataset_path: bc-irl-main/traj/pm_100.pth
+        env_name: ${env.env_name}
+    policy_init_fn:
+        _target_: imitation_learning.bcirl.reg_init
+        _recursive_: false
+        policy_cfg: ${policy}
+    reward:
+        _target_: imitation_learning.common.rewards.NeuralReward
+        obs_shape: ${obs_shape}
+        action_dim: ${action_dim}
+        reward_hidden_dim: 128
+        reward_type: NEXT_STATE
+        cost_take_dim: -1
+        include_tanh: false
+        n_hidden_layers: 2
+    inner_updater:
+        _target_: imitation_learning.policy_opt.ppo.PPO
+        _recursive_: false
+        use_clipped_value_loss: true
+        max_grad_norm: -1
+        value_loss_coef: 0.5
+        clip_param: 0.2
+        entropy_coef: 0.001
+        num_epochs: 2
+        num_mini_batch: 4
+        num_envs: ${num_envs}
+        num_steps: ${num_steps}
+        gae_lambda: 0.95
+        gamma: 0.99
+    inner_opt:
+        _target_: torch.optim.Adam
+        lr: 0.0001
+    reward_opt:
+        _target_: torch.optim.Adam
+        lr: 0.001
+    irl_loss:
+        _target_: torch.nn.MSELoss
+        reduction: mean
+logger:
+    _target_: rl_utils.logging.Logger
+    _recursive_: false
+    run_name: ""
+    seed: ${seed}
+    log_dir: ./data/vids/
+    vid_dir: ./data/vids/
+    save_dir: ./data/checkpoints/
+    smooth_len: 10
+    group_name: ""
+
+env:
+  env_name: "mouse-v0"
+  env_settings:
+    grid_size: [4, 4]
+    start_position: [0, 0]
+    goal_position: [4, 4]
+    obstacles: [[1, 1], [2, 2]]
+
+evaluator:
+    _target_: imitation_learning.common.pointmass_utils.PointMassVisualizer
+    rnn_hxs_dim: ${policy.recurrent_hidden_size}
+    num_render: 0
+    fps: 10
+    save_traj_name: null
+    plt_lim: 1.5
+    plt_density: 50
+    agent_point_size: 60
+    num_demo_plot: 10
+    plot_il: true
+    with_arrows: false
+    plot_expert: true
+    is_final_render: false
+eval_args:
+    policy_updater:
+        reward_update_freq: -1
+        n_inner_iters: 1
+    load_policy: false
+    num_env_steps: 5000000
+
+storage:
+  _target_: imitation_learning.policy_opt.storage.RolloutStorage
+  num_steps: ${num_steps}
+  num_processes: ${num_envs}
+  recurrent_hidden_state_size: ${policy.recurrent_hidden_size}
+  obs_shape: ${obs_shape}
+  action_dim: ${action_dim}
+  action_is_discrete: ${action_is_discrete}
+  fetch_final_obs: True
