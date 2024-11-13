@@ -1,4 +1,4 @@
-# Inverse Reinforcement Learning for Books
+# Inverse Reinforcement Learning for eBooks
 
 ## Folder Organization
 
