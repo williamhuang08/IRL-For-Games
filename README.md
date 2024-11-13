@@ -1,4 +1,4 @@
-# Inverse Reinforcement Learning for Games
+# Inverse Reinforcement Learning for Books
 
 ## Folder Organization
 
