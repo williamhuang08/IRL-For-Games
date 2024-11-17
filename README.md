@@ -1,5 +1,46 @@
 # Inverse Reinforcement Learning for eBooks
 
+## Models
+
+### AIRL for eBooks with simulated data
+We begin by implementing Adversarial Inverse Reinforcement Learning (AIRL) to learn an underlying reward function in a hypothetical e-reading service environment. In essence, we build a true reward function and agent policy. Then, the agent is trained in the environment and trajectories are collected. Using these (state, action) pairs over the agent's trajectories, we evaluate whether the reward function is able to match "expert" behavior.
+
+#### 1. Model Design
+Let score = a * engagement_level + b * section_number, where A > 0, b > 0 and engagement_level and section_number are normalized to 1. Arbitrarily, we let A = 1 and B = 0.5.
+
+As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state [section_number, engagement_level, time (# number of hours since last engagement), price] to an action [wait, read_without_payment, read_with_payment]
+
+```
+    if score > theta_1, continue reading (including paying):
+      if price = 1, read with paying (r = 5), wait (r = -1)
+      if price = 0, read without paying (r = 9), wait (r = -1)
+    else if theta_2 < score <= theta_1, 
+      if time since last read < 24 hours:
+          if price = 1, read with paying (r = 4), wait (r = -1)
+          if price = 0, read (r = 7), wait (r = -1)
+      else: # continue reading only if free (do not pay)
+          if price = 1, read with paying (r = 3), wait (r = -1)
+          if price = 0, read (r = 6), wait (r = -1)
+    else:
+      if  time since last read < 36 hours, continue reading only if free (do not pay) 
+          if price = 1, read with paying (r = 2), wait (r = -1)
+          if price = 0, read (r = 5), wait (r = -1)
+      else: wait (no reading)
+          if price = 1, read with paying (r = 1), wait (r = -1)
+          if price = 0, read (r = 3), wait (r = -1)
+```
+
+Transition function from states to states
+P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
+
+Here, price is a function of sections, price = 1 with probability that increases with section number
+P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.9) (drawn from bernouli distribution)
+Time_{t+1} = time_{t} + 1 hour
+Engagement_level = drawn from a normal distribution
+Section_number = section_number_t +1 only if the previous action is "read", otherwise, it equals section_number_t
+
+When the action is "read" (buy or free), reset time to 1 for the next state, because next decision-making point is 1 hour after reading the section.
+
 ## Folder Organization
 
 ### bc-irl-main
