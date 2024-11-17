@@ -8,7 +8,7 @@ We begin by implementing Adversarial Inverse Reinforcement Learning (AIRL) to le
 #### 1. Model Design
 Let score = a * engagement_level + b * section_number, where A > 0, b > 0 and engagement_level and section_number are normalized to 1. Arbitrarily, we let A = 1 and B = 0.5.
 
-As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state [section_number, engagement_level, time (# number of hours since last engagement), price] to an action [wait, read_without_payment, read_with_payment]
+As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state **[section_number, engagement_level, time (# number of hours since last engagement), price]** to an action **[wait, read_without_payment, read_with_payment]**
 
 ```
     if score > theta_1, continue reading (including paying):
@@ -34,11 +34,11 @@ Transition function from states to states
 P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
 ```
 
-Here, price is a function of sections, price = 1 with probability that increases with section number
-P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.9) (drawn from bernouli distribution)
-Time_{t+1} = time_{t} + 1 hour
-Engagement_level = drawn from a normal distribution
-Section_number = section_number_t +1 only if the previous action is "read", otherwise, it equals section_number_t
+Here, price is a function of sections, price = 1 with probability that increases with section number  
+P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.9) (drawn from bernouli distribution)  
+time_{t+1} = time_{t} + 1 hour  
+engagement_level_{t+1} = drawn from a normal distribution  
+section_number_{t+1} = section_number_{t} +1 only if the previous action is "read" (buy or not buy), otherwise, it equals section_number_{t}  
 
 When the action is "read" (buy or free), reset time to 1 for the next state, because next decision-making point is 1 hour after reading the section.
 
