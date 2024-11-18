@@ -8,7 +8,7 @@ We begin by implementing Adversarial Inverse Reinforcement Learning (AIRL) to le
 #### 1. Model Design
 Let score = a * engagement_level + b * section_number, where a > 0, b > 0 and engagement_level and section_number are normalized to a number between 0 and 1. Arbitrarily, we let a = 1 and b = 0.5.
 
-As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state **[section_number, engagement_level, time (# number of hours since last engagement), price]** to an action **[wait, read_without_payment, read_with_payment]**
+As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state **[section_number, engagement_level, time (# number of hours since last engagement), price (whether or not the agent has to pay to read at this moment)]** to an action **[wait, read_without_payment, read_with_payment]**
 
 ```
     if score > theta_1, continue reading (including paying):
