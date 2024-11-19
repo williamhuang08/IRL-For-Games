@@ -12,34 +12,34 @@ As in typical inverse reinforcement learning environments, we define a true rewa
 
 ##### Policy π: S -> A
 ```
-	If score > theta_1: continue reading (including paying) with high probabilities
-		if price = 1:
-			action = ACTION_READ_W_PAY (p = 0.7), WAIT (p = 0.3)
-		if price = 0:
-			action = ACTION_READ_WO_PAY (p = 0.9), WAIT (p = 0.1)
-	Else if theta_2 < score < theta_1: 
-		if time < 24: # time interval since last read is short
-			if price = 1:
-				action = ACTION_READ_W_PAY (p = 0.5), WAIT (p = 0.5)
-			if price = 0:
-				action = ACTION_READ_WO_PAY (p = 0.7), WAIT (p = 0.3)	
-		else: # time interval since last read is long (reader is less engaged)
-			if price = 1:
-				action = ACTION_READ_W_PAY (p = 0.3), WAIT (p = 0.7)
-			if price = 0:
-				action = ACTION_READ_WO_PAY (p = 0.5), WAIT (p = 0.5)				
-	Else: in all cases, the probability of reading with and without paying is low
-		if time < 36: # time interval since last read is short
-			if price = 1:
-				action = ACTION_READ_W_PAY (p = 0.2), WAIT (p = 0.8)
-			if price = 0:
-				action = ACTION_READ_WO_PAY (p = 0.4), WAIT (p = 0.6)	
-		else: # time interval since last read is long (reader is less engaged)
-			if price = 1:
-				action = ACTION_READ_W_PAY (p = 0.1), WAIT (p = 0.9)
-			if price = 0:
-				action = ACTION_READ_WO_PAY (p = 0.2), WAIT (p = 0.8)		
-	return action		
+If score > theta_1: continue reading (including paying) with high probabilities
+    if price = 1:
+        action = ACTION_READ_W_PAY (p = 0.7), WAIT (p = 0.3)
+    if price = 0:
+        action = ACTION_READ_WO_PAY (p = 0.9), WAIT (p = 0.1)
+Else if theta_2 < score < theta_1: 
+    if time < 24: # time interval since last read is short
+        if price = 1:
+            action = ACTION_READ_W_PAY (p = 0.5), WAIT (p = 0.5)
+        if price = 0:
+            action = ACTION_READ_WO_PAY (p = 0.7), WAIT (p = 0.3)	
+    else: # time interval since last read is long (reader is less engaged)
+        if price = 1:
+            action = ACTION_READ_W_PAY (p = 0.3), WAIT (p = 0.7)
+        if price = 0:
+            action = ACTION_READ_WO_PAY (p = 0.5), WAIT (p = 0.5)				
+Else: in all cases, the probability of reading with and without paying is low
+    if time < 36: # time interval since last read is short
+        if price = 1:
+            action = ACTION_READ_W_PAY (p = 0.2), WAIT (p = 0.8)
+        if price = 0:
+            action = ACTION_READ_WO_PAY (p = 0.4), WAIT (p = 0.6)	
+    else: # time interval since last read is long (reader is less engaged)
+        if price = 1:
+            action = ACTION_READ_W_PAY (p = 0.1), WAIT (p = 0.9)
+        if price = 0:
+            action = ACTION_READ_WO_PAY (p = 0.2), WAIT (p = 0.8)		
+return action		
 ```
 <!-- ```
     if score > theta_1, continue reading (including paying):
