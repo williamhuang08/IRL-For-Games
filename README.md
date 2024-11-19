@@ -10,7 +10,38 @@ Let score = a * engagement_level + b * section_number, where a > 0, b > 0 and en
 
 As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state **[section_number, engagement_level, time (# number of hours since last engagement), price (whether or not the agent has to pay to read at this moment)]** to an action **[wait, read_without_payment, read_with_payment]**
 
+##### Policy π: S -> A
 ```
+	If score > theta_1: continue reading (including paying) with high probabilities
+		if price = 1:
+			action = ACTION_READ_W_PAY (p = 0.7), WAIT (p = 0.3)
+		if price = 0:
+			action = ACTION_READ_WO_PAY (p = 0.9), WAIT (p = 0.1)
+	Else if theta_2 < score < theta_1: 
+		if time < 24: # time interval since last read is short
+			if price = 1:
+				action = ACTION_READ_W_PAY (p = 0.5), WAIT (p = 0.5)
+			if price = 0:
+				action = ACTION_READ_WO_PAY (p = 0.7), WAIT (p = 0.3)	
+		else: # time interval since last read is long (reader is less engaged)
+			if price = 1:
+				action = ACTION_READ_W_PAY (p = 0.3), WAIT (p = 0.7)
+			if price = 0:
+				action = ACTION_READ_WO_PAY (p = 0.5), WAIT (p = 0.5)				
+	Else: in all cases, the probability of reading with and without paying is low
+		if time < 36: # time interval since last read is short
+			if price = 1:
+				action = ACTION_READ_W_PAY (p = 0.2), WAIT (p = 0.8)
+			if price = 0:
+				action = ACTION_READ_WO_PAY (p = 0.4), WAIT (p = 0.6)	
+		else: # time interval since last read is long (reader is less engaged)
+			if price = 1:
+				action = ACTION_READ_W_PAY (p = 0.1), WAIT (p = 0.9)
+			if price = 0:
+				action = ACTION_READ_WO_PAY (p = 0.2), WAIT (p = 0.8)		
+	return action		
+```
+<!-- ```
     if score > theta_1, continue reading (including paying):
       if price = 1, read with paying (r = 5), wait (r = -1)
       if price = 0, read without paying (r = 9), wait (r = -1)
@@ -28,7 +59,7 @@ As in typical inverse reinforcement learning environments, we define a true rewa
       else: wait (no reading)
           if price = 1, read with paying (r = 1), wait (r = -1)
           if price = 0, read (r = 3), wait (r = -1)
-```
+``` -->
 Transition function from states to states
 ```
 P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
