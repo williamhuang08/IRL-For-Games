@@ -61,18 +61,21 @@ return action
           if price = 1, read with paying (r = 1), wait (r = -1)
           if price = 0, read (r = 3), wait (r = -1)
 ```
-Transition function from states to states
+##### Transition function from states to states
 ```
 P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
 ```
 
 Here, price is a function of sections, price = 1 with probability that increases with section number  
-P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.9) (drawn from bernouli distribution)  
+P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.7) (drawn from bernouli distribution)  
 time_{t+1} = time_{t} + 1 hour  
 engagement_level_{t+1} = drawn from a normal distribution  
 section_number_{t+1} = section_number_{t} +1 only if the previous action is "read" (buy or not buy), otherwise, it equals section_number_{t}  
 
-When the action is "read" (buy or free), reset time to 1 for the next state, because next decision-making point is 1 hour after reading the section.
+Note:  
+- When the action is "read" (buy or free), reset time to 1 for the next state, because next decision-making point is 1 hour after reading the section.  
+- For the first few chapters, the price will always be 0  
+- Terminating Condition: when the time interval > 108 or you have reached the end of the book
 
 ## Folder Organization
 
