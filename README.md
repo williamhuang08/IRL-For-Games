@@ -43,17 +43,17 @@ return action
 ```
 ##### Reward r: (s, a) -> R
 ```
-    if score > theta_1, continue reading (including paying):
+if score > theta_1, continue reading (including paying):
       if price = 1, read with paying (r = 5), wait (r = -1)
       if price = 0, read without paying (r = 9), wait (r = -1)
-    else if theta_2 < score <= theta_1, 
+else if theta_2 < score <= theta_1, 
       if time since last read < 24 hours:
           if price = 1, read with paying (r = 4), wait (r = -1)
           if price = 0, read (r = 7), wait (r = -1)
       else: # continue reading only if free (do not pay)
           if price = 1, read with paying (r = 3), wait (r = -1)
           if price = 0, read (r = 6), wait (r = -1)
-    else:
+else:
       if  time since last read < 36 hours, continue reading only if free (do not pay) 
           if price = 1, read with paying (r = 2), wait (r = -1)
           if price = 0, read (r = 5), wait (r = -1)
