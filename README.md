@@ -75,7 +75,7 @@ section_number_{t+1} = section_number_{t} +1 only if the previous action is "rea
 Note:  
 - When the action is "read" (buy or free), reset time to 1 for the next state, because next decision-making point is 1 hour after reading the section.  
 - For the first few chapters, the price will always be 0  
-- Terminating Condition: when the time interval > 108 or you have reached the end of the book
+- Terminating Condition: when the time interval > 108 (we assume that after a large amount of time, you probably won't read anymore) or you have reached the end of the book
 
 ## Folder Organization
 
