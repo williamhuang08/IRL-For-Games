@@ -3,7 +3,7 @@
 ## Models
 
 ### AIRL for eBooks with simulated data
-We begin by implementing Adversarial Inverse Reinforcement Learning (AIRL) to learn an underlying reward function in a hypothetical e-reading service environment. In essence, we build a true reward function and Markov decision process (MDP) environment. Then, an agent policy is trained in the environment and trajectories are collected. Using these (state, action) pairs over the agent's trajectories, we evaluate whether the reward function is able to match "expert" behavior.
+We begin by implementing Adversarial Inverse Reinforcement Learning (AIRL) to learn an underlying reward function in a hypothetical e-reading service environment. In essence, we build a true reward function, policy, and Markov decision process (MDP) environment. Then, an agent policy is trained in the environment and trajectories are collected. Using these (state, action) pairs over the agent's trajectories, we evaluate whether the reward function is able to match "expert" behavior.
 
 #### 1. Model Design
 Let score = a * engagement_level + b * section_number, where a > 0, b > 0 and engagement_level and section_number are normalized to a number between 0 and 1. Arbitrarily, we let a = 1 and b = 0.5.
