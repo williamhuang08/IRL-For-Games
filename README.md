@@ -41,7 +41,8 @@ Else: in all cases, the probability of reading with and without paying is low
             action = ACTION_READ_WO_PAY (p = 0.2), WAIT (p = 0.8)		
 return action		
 ```
-<!-- ```
+##### Reward r: (s, a) -> R
+```
     if score > theta_1, continue reading (including paying):
       if price = 1, read with paying (r = 5), wait (r = -1)
       if price = 0, read without paying (r = 9), wait (r = -1)
@@ -59,7 +60,7 @@ return action
       else: wait (no reading)
           if price = 1, read with paying (r = 1), wait (r = -1)
           if price = 0, read (r = 3), wait (r = -1)
-``` -->
+```
 Transition function from states to states
 ```
 P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
