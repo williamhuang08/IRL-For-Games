@@ -1,4 +1,4 @@
-# Inverse Reinforcement Learning for eBooks
+# Inverse Reinforcement Learning to Decode Human Behavior within eReaders
 
 ## Models
 
