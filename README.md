@@ -13,67 +13,67 @@ As in typical inverse reinforcement learning environments, we define a true rewa
 ##### Reward r: (s, a) -> R
 
 ```
-	score = interest_score(engagement_level, section_number)
-    if section is beginning section:
+score = interest_score(engagement_level, section_number)
+if section is beginning section:
+    if score > theta_1:
+        if price == 0: # price will always be 0 since the beginning is free
+            if action == ACTION_READ_FREE:
+                return 9
+            else: # Wait
+                return -1
+	elif theta_2 < score < theta_1:
+		if price == 0: # price will always be 0 since the beginning is free
+			if action == ACTION_READ_FREE:
+				return 7
+			else: # Wait
+				return -1
+	else: # time interval since last read is long (reader is less engaged)
+		if price == 0: # price will always be 0 since the beginning is free
+			if action == ACTION_READ_FREE:
+				return 5
+			else: # Wait
+				return -1
+if section is middle section:
+    if current section is wff:
+        return 6 * (1 - gamma) ** wff_hours_waited (in days)
+    else: # reader either buys or waits
         if score > theta_1:
-            if price == 0: # price will always be 0 since the beginning is free
-                if action == ACTION_READ_FREE:
-                    return 9
-                else: # Wait
-                    return -1
-	    elif theta_2 < score < theta_1:
-			if price == 0: # price will always be 0 since the beginning is free
-				if action == ACTION_READ_FREE:
-					return 7
-				else: # Wait
-					return -1
-		else: # time interval since last read is long (reader is less engaged)
-			if price == 0: # price will always be 0 since the beginning is free
-				if action == ACTION_READ_FREE:
-					return 5
-				else: # Wait
-					return -1
-    if section is middle section:
-        if current section is wff:
-            return 6 * (1 - gamma) ** wff_hours_waited (in days)
-        else: # reader either buys or waits
-            if score > theta_1:
-                if price == 1: # price will always be 1 since the chapter has a price
-                    if action == ACTION_READ_BUY:
-                        return 10
-                    else: # Wait
-                        return -1
-            elif theta_2 < score < theta_1:
-                if price == 0: # price will always be 1 since the chapter has a price
-                    if action == ACTION_READ_BUY:
-                        return 8
-                    else: # Wait
-                        return -1
-            else: # time interval since last read is long (reader is less engaged)
-                if price == 0: # price will always be 1 since the chapter has a price
-                    if action == ACTION_READ_BUY:
-                        return 6
-                    else: # Wait
-                        return -1
-    if section is end section:
-        if score > theta_1:
-            if price == 1: # price will always be 0 since the end has a price
+            if price == 1: # price will always be 1 since the chapter has a price
                 if action == ACTION_READ_BUY:
-                    return 11
+                    return 10
                 else: # Wait
                     return -1
-	    elif theta_2 < score < theta_1:
-			if price == 0: # price will always be 0 since the end has a price
-				if action == ACTION_READ_BUY:
-					return 9
-				else: # Wait
-					return -1
-		else: # time interval since last read is long (reader is less engaged)
-			if price == 0: # price will always be 0 since the end has a price
-				if action == ACTION_READ_BUY:
-					return 7
-				else: # Wait
-					return -1
+        elif theta_2 < score < theta_1:
+            if price == 0: # price will always be 1 since the chapter has a price
+                if action == ACTION_READ_BUY:
+                    return 8
+                else: # Wait
+                    return -1
+        else: # time interval since last read is long (reader is less engaged)
+            if price == 0: # price will always be 1 since the chapter has a price
+                if action == ACTION_READ_BUY:
+                    return 6
+                else: # Wait
+                    return -1
+if section is end section:
+    if score > theta_1:
+        if price == 1: # price will always be 0 since the end has a price
+            if action == ACTION_READ_BUY:
+                return 11
+            else: # Wait
+                return -1
+	elif theta_2 < score < theta_1:
+		if price == 0: # price will always be 0 since the end has a price
+			if action == ACTION_READ_BUY:
+				return 9
+			else: # Wait
+				return -1
+	else: # time interval since last read is long (reader is less engaged)
+		if price == 0: # price will always be 0 since the end has a price
+			if action == ACTION_READ_BUY:
+				return 7
+			else: # Wait
+				return -1
 ```
 
 ##### Transition function from states to states
@@ -183,10 +183,7 @@ else:
           if price = 1, read with paying (r = 1), wait (r = -1)
           if price = 0, read (r = 3), wait (r = -1)
 ``` -->
-##### Transition function from states to states
-```
-P(s_{t+1}|s_{t},a) = p(section_number_{t+1}, engagement_level_{t+1}, time_{t+1}, price_{t+1}|s_t, a) = p(section number_{t+1}, engagement_level_{t+1}, time_{t+1}|s_t, a) * p(price_{t+1}|s_t,a)
-```
+
 <!-- 
 Here, price is a function of sections, price = 1 with probability that increases with section number  
 P(price_{t+1}) =  1 - \gamma^{section number_t} (\gamma = 0.7) (drawn from bernouli distribution)  
