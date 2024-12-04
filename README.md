@@ -10,6 +10,130 @@ Let score = a * engagement_level + b * section_number, where a > 0, b > 0 and en
 
 As in typical inverse reinforcement learning environments, we define a true reward function r(s, a), which evaluates the reward a user gets if he takes action a for a given state **[section_number, engagement_level, time (# number of hours since last engagement), price (whether or not the agent has to pay to read at this moment)]** to an action **[wait, read_without_payment, read_with_payment]**
 
+
+```
+State: [section_number, engagement_level, time, price, wff, wff_hours_required, wff_hours_waited]
+Actions: [ACTION_READ_BUY, ACTION_READ_FREE, ACTION_WAIT]
+
+Reward Function:
+	score = interest_score(engagement_level, section_number)
+    if section is beginning section:
+        if score > theta_1:
+            if price == 0: # price will always be 0 since the beginning is free
+                if action == ACTION_READ_FREE:
+                    return 9
+                else: # Wait
+                    return -1
+	    elif theta_2 < score < theta_1:
+			if price == 0: # price will always be 0 since the beginning is free
+				if action == ACTION_READ_FREE:
+					return 7
+				else: # Wait
+					return -1
+		else: # time interval since last read is long (reader is less engaged)
+			if price == 0: # price will always be 0 since the beginning is free
+				if action == ACTION_READ_FREE:
+					return 5
+				else: # Wait
+					return -1
+    if section is middle section:
+        if current section is wff:
+            return 6 * (1 - gamma) ** wff_hours_waited (in days)
+        else: # reader either buys or waits
+            if score > theta_1:
+                if price == 1: # price will always be 1 since the chapter has a price
+                    if action == ACTION_READ_BUY:
+                        return 10
+                    else: # Wait
+                        return -1
+            elif theta_2 < score < theta_1:
+                if price == 0: # price will always be 1 since the chapter has a price
+                    if action == ACTION_READ_BUY:
+                        return 8
+                    else: # Wait
+                        return -1
+            else: # time interval since last read is long (reader is less engaged)
+                if price == 0: # price will always be 1 since the chapter has a price
+                    if action == ACTION_READ_BUY:
+                        return 6
+                    else: # Wait
+                        return -1
+    if section is end section:
+        if score > theta_1:
+            if price == 1: # price will always be 0 since the end has a price
+                if action == ACTION_READ_BUY:
+                    return 11
+                else: # Wait
+                    return -1
+	    elif theta_2 < score < theta_1:
+			if price == 0: # price will always be 0 since the end has a price
+				if action == ACTION_READ_BUY:
+					return 9
+				else: # Wait
+					return -1
+		else: # time interval since last read is long (reader is less engaged)
+			if price == 0: # price will always be 0 since the end has a price
+				if action == ACTION_READ_BUY:
+					return 7
+				else: # Wait
+					return -1
+		
+
+Transition Function:
+if beginning chapters are entered:
+    if action == ACTION_READ_FREE: 
+        section_number += 1
+        time = 0 
+    price = 0
+    engagement_level drawn from normal
+    wff = 0
+    wff_hours = 0
+if middle chapters are entered:
+    if current chapter is not wff (reader must buy):
+        if ACTION_READ_BUY:
+            section_number += 1
+            if section_number is middle chapter:
+                wff drawn from bernoulli
+                if wff:
+                    wff_hours_required set to number between 1-72 (uniform distribution)
+                    wff_hours_waited = 0
+            engagement_level drawn from normal
+            time = 0
+        time += 1
+        price = 1
+    else (current chapter is wff):
+        if ACTION_READ_BUY: # case where the agent decides the buy instead of keep waiting
+            wff = 0
+            wff_hours_required = 0
+            wff_hours_waited = 0
+            time += 1
+        else:
+            wff_hours -= 1
+            if wff_hours == 0:
+                wff = 0
+if end chapters are entered:
+    if action == ACTION_READ_BUY: 
+        section_number += 1
+        time = 0 
+    price = 1
+    engagement_level drawn from normal
+    wff = 0
+    wff_hours = 0       
+done = time >= 108 or section_number > NUM_CHAPTERS
+new_state = [section_number, engagement_level, time, price, wff, wff_hours]
+return new_state
+
+IF WAIT_FOR_FREE:
+	WFF_HOURS -= 1
+	time, engagement_level, section_number, price stays the same
+    when WFF_HOURS reaches 0:
+        time set to 0
+        engagement_level drawn again from normal
+        price set to 0
+        wff set to 0
+    
+```
+
 ##### Policy π: S -> A
 ```
 If score > theta_1: continue reading (including paying) with high probabilities
